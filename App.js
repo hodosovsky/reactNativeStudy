@@ -1,20 +1,15 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import RegistrationScreen from "./assets/screens/auth/RegistrationScreen";
+import { useFonts } from "expo-font";
+import { useCallback } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { View } from "react-native";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>My first app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <RegistrationScreen />
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
