@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   Text,
@@ -9,10 +10,12 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Dimensions,
 } from "react-native";
 import { useFonts } from "expo-font";
 import { useCallback, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
+import ToastManager, { Toast } from "toastify-react-native";
 
 SplashScreen.preventAutoHideAsync();
 const bg = require("../images/bg.jpg");
@@ -52,27 +55,35 @@ export default function LoginScreen() {
   };
 
   const handleSubmit = () => {
-    if (
-      state.email !== "" &&
-      state.password !== "" &&
-      state.email.includes("@")
-    ) {
+    if (state.name === "" || state.email === "" || state.password === "") {
+      Toast.error("all fields must be filled");
+      return;
+    }
+
+    if (state.email.includes("@")) {
       setIsShowKeyboard(false);
       Keyboard.dismiss();
       console.log(state);
       setState(initialState);
+      return;
     }
-    return;
+
+    Toast.error('Email must have "@"');
   };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground source={bg} style={styles.image}>
+          <ToastManager
+            hasBackdrop={true}
+            duration={2000}
+            backdropColor={"red"}
+          />
           <View
             style={{
               ...styles.registerBox,
-              paddingBottom: isShowKeyboard ? 32 : 78,
+              paddingBottom: isShowKeyboard ? 32 : 144,
             }}
           >
             <KeyboardAvoidingView
@@ -135,6 +146,7 @@ export default function LoginScreen() {
             </KeyboardAvoidingView>
           </View>
         </ImageBackground>
+        <StatusBar style="auto" />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -157,7 +169,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
   },
   title: {
-    marginTop: 92,
+    marginTop: 32,
     marginBottom: 33,
     fontFamily: "medium",
     fontWeight: 500,
@@ -187,7 +199,7 @@ const styles = StyleSheet.create({
   },
   swowPassword: {
     position: "absolute",
-    top: 260,
+    top: 200,
     right: 32,
     color: "#1B4371",
     fontFamily: "normal",
@@ -197,6 +209,7 @@ const styles = StyleSheet.create({
   btn: {
     alignItems: "center",
     marginHorizontal: 16,
+    marginTop: 27,
     marginBottom: 16,
     paddingHorizontal: 32,
     paddingVertical: 16,

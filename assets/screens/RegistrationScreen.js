@@ -9,12 +9,14 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Image,
+  Dimensions,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { useCallback, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { AntDesign } from "@expo/vector-icons";
+import ToastManager, { Toast } from "toastify-react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -57,24 +59,31 @@ export default function RegistrationScreen() {
   };
 
   const handleSubmit = () => {
-    if (
-      state.name !== "" &&
-      state.email !== "" &&
-      state.password !== "" &&
-      state.email.includes("@")
-    ) {
+    if (state.name === "" || state.email === "" || state.password === "") {
+      Toast.error("all fields must be filled");
+      return;
+    }
+
+    if (state.email.includes("@")) {
       setIsShowKeyboard(false);
       Keyboard.dismiss();
       console.log(state);
       setState(initialState);
+      return;
     }
-    return;
+
+    Toast.error('Email must have "@"');
   };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground source={bg} style={styles.image}>
+          <ToastManager
+            hasBackdrop={true}
+            duration={3000}
+            backdropColor={"red"}
+          />
           <View
             style={{
               ...styles.registerBox,
@@ -168,6 +177,7 @@ export default function RegistrationScreen() {
             </KeyboardAvoidingView>
           </View>
         </ImageBackground>
+        <StatusBar style="auto" />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -245,6 +255,7 @@ const styles = StyleSheet.create({
   btn: {
     alignItems: "center",
     marginHorizontal: 16,
+    marginTop: 27,
     marginBottom: 16,
     paddingHorizontal: 32,
     paddingVertical: 16,
