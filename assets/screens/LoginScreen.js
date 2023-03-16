@@ -172,7 +172,6 @@ const styles = StyleSheet.create({
     marginTop: 32,
     marginBottom: 33,
     fontFamily: "medium",
-    fontWeight: 500,
     fontSize: 30,
     lineHeight: 35,
     textAlign: "center",
