@@ -27,7 +27,7 @@ export default function App() {
   }
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      <NavigationContainer>{routing}</NavigationContainer>
+      <NavigationContainer style={styles.tab}>{routing}</NavigationContainer>
     </View>
   );
 }

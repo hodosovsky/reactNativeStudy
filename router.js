@@ -1,6 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StyleSheet, Button } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import RegistrationScreen from "./Screens/RegistrationScreen";
 import LoginScreen from "./Screens/LoginScreen";
@@ -32,28 +34,43 @@ export const useRoute = (isAuth) => {
   return (
     <MainTab.Navigator screenOptions={{ tabBarShowLabel: false }}>
       <MainTab.Screen
-        options={{
-          tabBarIcon: ({ focused, size, color }) => {
-            return <Feather name="grid" size={size} color={color} />;
-          },
-        }}
         name="Posts"
         component={PostsScreen}
+        options={{
+          tabBarIcon: ({ focused, size, color }) => {
+            return <Feather name="grid" size={size} color="#212121" />;
+          },
+          headerRight: () => (
+            <MaterialIcons
+              name="logout"
+              size={24}
+              color="#BDBDBD"
+              style={styles.logout}
+              onPress={() => alert("This is a button!")}
+            />
+          ),
+        }}
       />
 
       <MainTab.Screen
         options={{
-          tabBarIcon: ({ focused, size, color }) => {
-            return <Feather name="plus" size={size} color={color} />;
-          },
+          tabBarIcon: ({ focused, size, color }) => (
+            <Feather
+              name="plus"
+              size={size}
+              color="white"
+              style={styles.iconAdd}
+            />
+          ),
         }}
         name="Create Post"
         component={CreatePostsScreen}
       />
       <MainTab.Screen
         options={{
+          headerShown: false,
           tabBarIcon: ({ focused, size, color }) => {
-            return <Feather name="user" size={size} color={color} />;
+            return <Feather name="user" size={size} color="#212121" />;
           },
         }}
         name="Profile"
@@ -62,3 +79,14 @@ export const useRoute = (isAuth) => {
     </MainTab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  logout: { paddingRight: 12 },
+  iconAdd: {
+    paddingVertical: 9,
+    paddingHorizontal: 28.5,
+    textAlign: "center",
+    borderRadius: 20,
+    backgroundColor: "red",
+  },
+});
