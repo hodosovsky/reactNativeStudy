@@ -14,6 +14,7 @@ import {
   Button,
 } from "react-native";
 import { useState } from "react";
+
 const bg = require("../assets/images/bg.jpg");
 
 const initialState = {
@@ -48,6 +49,9 @@ export default function LoginScreen({ navigation }) {
       Keyboard.dismiss();
       console.log(state);
       setState(initialState);
+
+      navigation.navigate("Home");
+
       return;
     }
 

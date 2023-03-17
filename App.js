@@ -9,7 +9,7 @@ import { NavigationContainer } from "@react-navigation/native";
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const routing = useRoute(true);
+  const routing = useRoute(false);
   const [fontsLoaded] = useFonts({
     medium: require("./assets/fonts/rmedium.ttf"),
     normal: require("./assets/fonts/rregular.ttf"),
