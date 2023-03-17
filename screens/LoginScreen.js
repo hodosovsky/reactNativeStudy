@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   Text,
@@ -9,46 +10,22 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Dimensions,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { useFonts } from "expo-font";
-import { useCallback, useState } from "react";
-import * as SplashScreen from "expo-splash-screen";
-import { AntDesign } from "@expo/vector-icons";
+import { useState } from "react";
 import ToastManager, { Toast } from "toastify-react-native";
 
-SplashScreen.preventAutoHideAsync();
-
-const bg = require("../images/bg.jpg");
+const bg = require("../assets/images/bg.jpg");
 const initialState = {
-  name: "",
   email: "",
   password: "",
 };
-export default function RegistrationScreen() {
+export default function LoginScreen() {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [passwordFocus, setPasswordFocus] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
-  const [nameFocus, setNameFocus] = useState(false);
 
-  const [fontsLoaded] = useFonts({
-    medium: require("../fonts/rmedium.ttf"),
-    normal: require("../fonts/rregular.ttf"),
-    bold: require("../fonts/rbold.ttf"),
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
   const changeIsPasswordSecure = () => {
     setIsPasswordSecure(!isPasswordSecure);
   };
@@ -77,52 +54,25 @@ export default function RegistrationScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={styles.container} onLayout={onLayoutRootView}>
+      <>
         <ImageBackground source={bg} style={styles.image}>
           <ToastManager
             hasBackdrop={true}
-            duration={3000}
+            duration={2000}
             backdropColor={"red"}
           />
           <View
             style={{
               ...styles.registerBox,
-              paddingBottom: isShowKeyboard ? 32 : 78,
+              paddingBottom: isShowKeyboard ? 32 : 144,
             }}
           >
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-              <View style={{ position: "absolute", top: -60, left: 128 }}>
-                <View style={styles.avatar}>
-                  <AntDesign
-                    style={styles.icon}
-                    name="pluscircleo"
-                    size={25}
-                    color="#FF6C00"
-                  />
-                </View>
-              </View>
-
               <View style={styles.form}>
-                <Text style={styles.title}>Registration</Text>
+                <Text style={styles.title}>Log In</Text>
 
-                <TextInput
-                  style={{
-                    ...styles.input,
-                    borderColor: nameFocus ? "#FF6C00" : "#E8E8E8",
-                  }}
-                  onFocus={() => {
-                    setIsShowKeyboard(true);
-                    setNameFocus(true);
-                  }}
-                  onBlur={() => setNameFocus(false)}
-                  value={state.name}
-                  placeholder={"Login"}
-                  onChangeText={(value) =>
-                    setState((prev) => ({ ...prev, name: value }))
-                  }
-                />
                 <TextInput
                   style={{
                     ...styles.input,
@@ -169,16 +119,16 @@ export default function RegistrationScreen() {
                 activeOpacity={0.7}
                 style={styles.btn}
               >
-                <Text style={styles.btnText}>Register</Text>
+                <Text style={styles.btnText}>Log In</Text>
               </TouchableOpacity>
               <TouchableOpacity>
-                <Text style={styles.login}>Already has account? Login</Text>
+                <Text style={styles.login}>Don't have an account? Sign up</Text>
               </TouchableOpacity>
             </KeyboardAvoidingView>
           </View>
         </ImageBackground>
         <StatusBar style="auto" />
-      </View>
+      </>
     </TouchableWithoutFeedback>
   );
 }
@@ -199,26 +149,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     borderTopLeftRadius: 25,
   },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-    backgroundColor: "#F6F6F6",
-    position: "relative",
-  },
-  icon: {
-    position: "absolute",
-    right: -12,
-    bottom: 14,
-    zIndex: 100,
-  },
-  avatarImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-  },
   title: {
-    marginTop: 92,
+    marginTop: 32,
     marginBottom: 33,
     fontFamily: "medium",
     fontSize: 30,
@@ -242,9 +174,12 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     borderRadius: 8,
   },
+  password: {
+    position: "relative",
+  },
   swowPassword: {
     position: "absolute",
-    top: 336,
+    top: 200,
     right: 32,
     color: "#1B4371",
     fontFamily: "normal",
