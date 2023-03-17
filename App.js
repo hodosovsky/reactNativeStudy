@@ -1,15 +1,15 @@
 import { StyleSheet } from "react-native";
-
-import RegistrationScreen from "./screens/RegistrationScreen";
-import LoginScreen from "./screens/LoginScreen";
 import { useFonts } from "expo-font";
 import { useCallback } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
+import { useRoute } from "./router";
+import { NavigationContainer } from "@react-navigation/native";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const routing = useRoute(true);
   const [fontsLoaded] = useFonts({
     medium: require("./assets/fonts/rmedium.ttf"),
     normal: require("./assets/fonts/rregular.ttf"),
@@ -27,7 +27,7 @@ export default function App() {
   }
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      {true ? <RegistrationScreen /> : <LoginScreen />}
+      <NavigationContainer>{routing}</NavigationContainer>
     </View>
   );
 }
