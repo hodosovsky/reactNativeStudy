@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Dimensions,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
@@ -60,7 +59,7 @@ export default function RegistrationScreen({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <>
+      <View style={styles.container}>
         <ImageBackground source={bg} style={styles.image}>
           <ToastManager
             hasBackdrop={true}
@@ -164,7 +163,7 @@ export default function RegistrationScreen({ navigation }) {
           </View>
         </ImageBackground>
         <StatusBar style="auto" />
-      </>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -180,6 +179,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   registerBox: {
+    flex: 0.75,
     backgroundColor: "#fff",
 
     borderTopRightRadius: 25,

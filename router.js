@@ -34,7 +34,9 @@ export const useRoute = (isAuth) => {
   }
 
   return (
-    <MainTab.Navigator screenOptions={{ tabBarShowLabel: false }}>
+    <MainTab.Navigator
+      screenOptions={{ tabBarShowLabel: false, tabBarStyle: { height: 80 } }}
+    >
       <MainTab.Screen
         name="Posts"
         component={PostsScreen}

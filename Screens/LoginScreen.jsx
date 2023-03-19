@@ -60,7 +60,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <>
+      <View style={styles.container}>
         <ImageBackground source={bg} style={styles.image}>
           <ToastManager
             hasBackdrop={true}
@@ -137,7 +137,7 @@ export default function LoginScreen({ navigation }) {
           </View>
         </ImageBackground>
         <StatusBar style="auto" />
-      </>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   registerBox: {
     backgroundColor: "#fff",
-
+    flex: 0.45,
     borderTopRightRadius: 25,
     borderTopLeftRadius: 25,
   },
