@@ -16,8 +16,11 @@ import * as Location from "expo-location";
 import * as MediaLibrary from "expo-media-library";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import ToastManager, { Toast } from "toastify-react-native";
+import uuid from "react-native-uuid";
 
 const initialState = {
+  id: "",
   uri: "",
   name: "",
   latitude: "",
@@ -25,7 +28,7 @@ const initialState = {
   city: "",
 };
 
-export default function CreatePostsScreen() {
+export default function CreatePostsScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
@@ -59,21 +62,31 @@ export default function CreatePostsScreen() {
     Keyboard.dismiss();
   };
 
-  const handleSubmit = () => {
-    //  if (state.name === "" || state.email === "" || state.password === "") {
-    //    Toast.error("all fields must be filled");
-    //    return;
-    //  }
+  const handleSubmit = async () => {
+    // if (state.name === "" || state.city === "") {
+    //   Toast.error("all fields must be filled");
+    //   return;
+    // }
+    // if (state.uri === "") {
+    //   Toast.error("Make photo, please");
+    //   return;
+    // }
 
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(state);
+
     setState(initialState);
+    navigation.navigate("Posts", state);
   };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
+        <ToastManager
+          hasBackdrop={true}
+          duration={2000}
+          backdropColor={"red"}
+        />
         <Camera
           style={styles.camera}
           type={type}
@@ -109,6 +122,7 @@ export default function CreatePostsScreen() {
                     ...prev,
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
+                    id: uuid.v4(),
                   }));
                   console.log(state);
                 }
@@ -159,7 +173,7 @@ export default function CreatePostsScreen() {
               name="location-outline"
               size={18}
               color="#BDBDBD"
-              style={{ position: "absolute", top: 124, left: 0 }}
+              style={{ position: "absolute", top: 108, left: 0 }}
             />
 
             <TouchableOpacity
@@ -234,7 +248,6 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
   },
   input: {
-    marginBottom: 16,
     fontSize: 16,
     lineHeight: 19,
     fontFamily: "normal",

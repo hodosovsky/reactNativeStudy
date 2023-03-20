@@ -10,6 +10,7 @@ import PostsScreen from "./Screens/PostsScreen";
 import CreatePostsScreen from "./Screens/CreatePostsScreen";
 import ProfileScreen from "./Screens/ProfileScreen";
 import HomeScreen from "./Screens/Home";
+import MapScreen from "./Screens/MapScreen";
 
 const AuthStack = createNativeStackNavigator();
 const MainTab = createBottomTabNavigator();
@@ -28,7 +29,7 @@ export const useRoute = (isAuth) => {
           name="Register"
           component={RegistrationScreen}
         />
-        <AuthStack.Screen name="Home" component={HomeScreen} />
+        <AuthStack.Screen name="Map" component={HomeScreen} />
       </AuthStack.Navigator>
     );
   }
@@ -91,6 +92,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28.5,
     textAlign: "center",
     borderRadius: 20,
-    backgroundColor: "red",
+    backgroundColor: "#FF6C00",
   },
 });
