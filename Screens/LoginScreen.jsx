@@ -155,8 +155,6 @@ const styles = StyleSheet.create({
   registerBox: {
     backgroundColor: "#fff",
     flex: 0.45,
-    borderTopRightRadius: 25,
-    borderTopLeftRadius: 25,
   },
   title: {
     marginTop: 32,

@@ -22,6 +22,7 @@ const initialState = {
   name: "",
   latitude: "",
   longitude: "",
+  city: "",
 };
 
 export default function CreatePostsScreen() {
@@ -31,15 +32,18 @@ export default function CreatePostsScreen() {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [photo, setPhoto] = useState(null);
   const [state, setState] = useState(initialState);
-  // const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
+      let { status } = await Camera.requestCameraPermissionsAsync();
       await MediaLibrary.requestPermissionsAsync();
-
       setHasPermission(status === "granted");
+
+      const loc = await Location.requestForegroundPermissionsAsync();
+      if (loc.status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
     })();
   }, []);
 
@@ -49,23 +53,6 @@ export default function CreatePostsScreen() {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-  // const handleLocation = async () => {
-  //   const { status } = await Location.requestForegroundPermissionsAsync();
-  //   if (status !== "granted") {
-  //     setErrorMsg("Permission to access location was denied");
-  //     return;
-  //   }
-
-  //   let location1 = await Location.getCurrentPositionAsync({});
-  //   console.log(location1);
-  //   // let text = "Waiting..";
-  //   // if (errorMsg) {
-  //   //   text = errorMsg;
-  //   // } else if (location1) {
-  //   //   text = JSON.stringify(location1);
-  //   // }
-  //   setLocation(JSON.stringify(location1));
-  // };
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -87,9 +74,6 @@ export default function CreatePostsScreen() {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        ></KeyboardAvoidingView>
         <Camera
           style={styles.camera}
           type={type}
@@ -141,50 +125,66 @@ export default function CreatePostsScreen() {
           />
         </Camera>
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <Text style={styles.title}>Download photo</Text>
-          <TextInput
-            style={styles.input}
-            value={state.name}
-            placeholder={"Name..."}
-            onFocus={() => {
-              setIsShowKeyboard(true);
-            }}
-            onChangeText={(value) =>
-              setState((prev) => ({ ...prev, name: value }))
-            }
-          />
+        <View style={styles.form}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <Text style={styles.title}>
+              {photo ? "Change Photo" : "Download photo"}
+            </Text>
+            <TextInput
+              style={styles.input}
+              value={state.name}
+              placeholder={"Name..."}
+              onFocus={() => {
+                setIsShowKeyboard(true);
+              }}
+              onChangeText={(value) =>
+                setState((prev) => ({ ...prev, name: value }))
+              }
+            />
 
-          <Text style={styles.title}>
+            <TextInput
+              style={{ ...styles.input, paddingLeft: 25 }}
+              value={state.city}
+              placeholder={"Location"}
+              onFocus={() => {
+                setIsShowKeyboard(true);
+              }}
+              onChangeText={(value) =>
+                setState((prev) => ({ ...prev, city: value }))
+              }
+            />
             <Ionicons
               name="location-outline"
               size={18}
               color="#BDBDBD"
               style={{ position: "absolute", top: 124, left: 0 }}
             />
-            {"  "}
-            {state.latitude
-              ? `${state.latitude} ${state.longitude}`
-              : "Location"}
-          </Text>
-          <TouchableOpacity
-            onPress={handleSubmit}
-            activeOpacity={0.7}
-            style={styles.btn}
-          >
-            <Text style={styles.btnText}>Public</Text>
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
+
+            <TouchableOpacity
+              onPress={handleSubmit}
+              activeOpacity={0.7}
+              style={styles.btn}
+            >
+              <Text style={styles.btnText}>Public</Text>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingVertical: 32, paddingHorizontal: 16 },
+  container: {
+    flex: 1,
+    paddingVertical: 32,
+    paddingHorizontal: 16,
+    backgroundColor: "white",
+  },
   camera: {
+    flex: 0.55,
     width: "100%",
     height: 240,
     justifyContent: "center",
@@ -222,6 +222,10 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 50,
   },
+  form: {
+    flex: 0.6,
+    backgroundColor: "#fff",
+  },
   title: {
     marginTop: 8,
     fontFamily: "normal",
@@ -235,6 +239,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontFamily: "normal",
     color: "#BDBDBD",
+    backgroundColor: "transparent",
     padding: 16,
     borderBottomColor: "#E8E8E8",
     borderBottomWidth: 1,
@@ -242,8 +247,9 @@ const styles = StyleSheet.create({
   btn: {
     alignItems: "center",
     marginHorizontal: 16,
-    marginTop: 27,
-    marginBottom: 16,
+    marginTop: 32,
+    width: "100%",
+    alignSelf: "center",
     paddingHorizontal: 32,
     paddingVertical: 16,
     backgroundColor: "#FF6C00",
