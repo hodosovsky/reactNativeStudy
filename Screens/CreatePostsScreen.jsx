@@ -43,11 +43,11 @@ export default function CreatePostsScreen({ navigation }) {
       await MediaLibrary.requestPermissionsAsync();
       setHasPermission(status === "granted");
 
-      const loc = await Location.requestForegroundPermissionsAsync();
-      if (loc.status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
+      await Location.requestForegroundPermissionsAsync();
+      // if (loc.status !== "granted") {
+      //   console.log("Permission to access location was denied");
+      //   // return;
+      // }
     })();
   }, []);
 
@@ -113,14 +113,24 @@ export default function CreatePostsScreen({ navigation }) {
                 if (cameraRef) {
                   const { uri } = await cameraRef.takePictureAsync();
                   setPhoto(uri);
-                  const location = await Location.getCurrentPositionAsync({});
+
+                  try {
+                    const location = await Location.getCurrentPositionAsync({});
+                    console.log(location);
+
+                    setState((prev) => ({
+                      ...prev,
+                      latitude: location.coords?.latitude,
+                      longitude: location.coords?.longitude,
+                    }));
+                  } catch (error) {
+                    console.log("Permission to access location was denied");
+                  }
 
                   setState((prev) => ({ ...prev, uri }));
                   await MediaLibrary.createAssetAsync(uri);
                   setState((prev) => ({
                     ...prev,
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
                     id: uuid.v4(),
                   }));
                   console.log(state);

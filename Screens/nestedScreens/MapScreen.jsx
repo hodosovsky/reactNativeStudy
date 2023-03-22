@@ -6,23 +6,27 @@ const MapScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: route.params.latitude,
-          longitude: route.params.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        <Marker
-          coordinate={{
-            latitude: route.params.latitude,
-            longitude: route.params.longitude,
+      {route.params.latitude ? (
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: route.params.latitude || null,
+            longitude: route.params.longitude || null,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }}
-          title={route.params.name}
-        />
-      </MapView>
+        >
+          <Marker
+            coordinate={{
+              latitude: route.params.latitude || null,
+              longitude: route.params.longitude || null,
+            }}
+            title={route.params.name}
+          />
+        </MapView>
+      ) : (
+        <Text>No location data</Text>
+      )}
     </View>
   );
 };
