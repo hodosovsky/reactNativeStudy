@@ -10,7 +10,7 @@ import PostsScreen from "./Screens/PostsScreen";
 import CreatePostsScreen from "./Screens/CreatePostsScreen";
 import ProfileScreen from "./Screens/ProfileScreen";
 import HomeScreen from "./Screens/Home";
-import MapScreen from "./Screens/MapScreen";
+import MapScreen from "./Screens/nestedScreens/MapScreen";
 
 const AuthStack = createNativeStackNavigator();
 const MainTab = createBottomTabNavigator();
@@ -42,6 +42,7 @@ export const useRoute = (isAuth) => {
         name="Posts"
         component={PostsScreen}
         options={{
+          headerShown: false,
           tabBarIcon: ({ focused, size, color }) => {
             return <Feather name="grid" size={size} color="#212121" />;
           },

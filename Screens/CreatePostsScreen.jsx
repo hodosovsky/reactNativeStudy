@@ -76,7 +76,7 @@ export default function CreatePostsScreen({ navigation }) {
     Keyboard.dismiss();
 
     setState(initialState);
-    navigation.navigate("Posts", state);
+    navigation.navigate("DefaultScreen", state);
   };
 
   return (

@@ -5,10 +5,17 @@ import {
   FlatList,
   Image,
   View,
+  TouchableOpacity,
 } from "react-native";
+// import { moduleName } from "react-native";
+// import { createStackNavigator } from "@react-navigation/stack";
+// import MapScreen from "../Screens/MapScreen";
+
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+
+// const NestedScreen = createStackNavigator();
 
 const PostsList = ({ state, navigation }) => {
   console.log("state:", state);
@@ -35,8 +42,15 @@ const PostsList = ({ state, navigation }) => {
               }}
             >
               <View style={{ display: "flex", flexDirection: "row" }}>
-                <View style={styles.likes}>
-                  <FontAwesome name="comment" size={24} color="#FF6C00" />
+                <TouchableOpacity
+                  style={styles.likes}
+                  onPress={() => navigation.navigate("Comments", item)}
+                >
+                  <FontAwesome
+                    name="comment"
+                    size={24}
+                    color={true ? "#FF6C00" : "#BDBDBD"}
+                  />
                   <Text
                     style={{
                       fontFamily: "normal",
@@ -50,9 +64,13 @@ const PostsList = ({ state, navigation }) => {
                   >
                     {5}
                   </Text>
-                </View>
-                <View style={styles.likes}>
-                  <AntDesign name="like2" size={24} color="#FF6C00" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.likes}>
+                  <AntDesign
+                    name="like2"
+                    size={24}
+                    color={true ? "#FF6C00" : "#BDBDBD"}
+                  />
                   <Text
                     style={{
                       fontFamily: "normal",
@@ -64,11 +82,11 @@ const PostsList = ({ state, navigation }) => {
                   >
                     {12}
                   </Text>
-                </View>
+                </TouchableOpacity>
               </View>
-              <View
+              <TouchableOpacity
                 style={styles.likes}
-                onPress={() => navigation.navigate("Map")}
+                onPress={() => navigation.navigate("Map", item)}
               >
                 <Ionicons name="location-outline" size={24} color="#BDBDBD" />
                 <Text
@@ -83,7 +101,7 @@ const PostsList = ({ state, navigation }) => {
                 >
                   {item.city}
                 </Text>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
         );
