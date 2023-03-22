@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -16,6 +16,7 @@ import * as Location from "expo-location";
 import * as MediaLibrary from "expo-media-library";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import ToastManager, { Toast } from "toastify-react-native";
 import uuid from "react-native-uuid";
 
@@ -63,20 +64,18 @@ export default function CreatePostsScreen({ navigation }) {
   };
 
   const handleSubmit = async () => {
-    // if (state.name === "" || state.city === "") {
-    //   Toast.error("all fields must be filled");
-    //   return;
-    // }
-    // if (state.uri === "") {
-    //   Toast.error("Make photo, please");
-    //   return;
-    // }
-
     setIsShowKeyboard(false);
     Keyboard.dismiss();
 
-    setState(initialState);
     navigation.navigate("DefaultScreen", state);
+    setState(initialState);
+    setPhoto(null);
+  };
+
+  const onDelete = () => {
+    navigation.navigate("DefaultScreen");
+    setState(initialState);
+    setPhoto(null);
   };
 
   return (
@@ -179,10 +178,30 @@ export default function CreatePostsScreen({ navigation }) {
             <TouchableOpacity
               onPress={handleSubmit}
               activeOpacity={0.7}
-              style={styles.btn}
+              disabled={state.name && state.city && state.uri ? false : true}
+              style={{
+                ...styles.btn,
+                backgroundColor:
+                  state.name && state.city && state.uri ? "#FF6C00" : "#F6F6F6",
+              }}
             >
               <Text style={styles.btnText}>Public</Text>
             </TouchableOpacity>
+            <View style={{ alignItems: "center", marginTop: 120 }}>
+              <TouchableOpacity
+                onPress={onDelete}
+                style={{
+                  width: 70,
+                  height: 40,
+                  backgroundColor: "#F6F6F6",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 20,
+                }}
+              >
+                <FontAwesome5 name="trash-alt" size={24} color="#BDBDBD" />
+              </TouchableOpacity>
+            </View>
           </KeyboardAvoidingView>
         </View>
       </View>
@@ -198,7 +217,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   camera: {
-    flex: 0.55,
+    flex: 0.4,
     width: "100%",
     height: 240,
     justifyContent: "center",
@@ -212,7 +231,6 @@ const styles = StyleSheet.create({
 
   flipContainer: {
     flex: 0.2,
-
     alignSelf: "flex-end",
   },
 
@@ -237,7 +255,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   form: {
-    flex: 0.6,
+    flex: 0.5,
     backgroundColor: "#fff",
   },
   title: {
@@ -265,7 +283,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingHorizontal: 32,
     paddingVertical: 16,
-    backgroundColor: "#FF6C00",
+    // backgroundColor: "#FF6C00",
+    // backgroundColor: state.name && state.city ? "#F6F6F6" : "#F6F6F6",
     borderRadius: 100,
   },
   btnText: {

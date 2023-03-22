@@ -60,6 +60,7 @@ export const useRoute = (isAuth) => {
 
       <MainTab.Screen
         options={{
+          tabBarStyle: { display: "none" },
           tabBarIcon: ({ focused, size, color }) => (
             <Feather
               name="plus"
