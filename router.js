@@ -46,15 +46,6 @@ export const useRoute = (isAuth) => {
           tabBarIcon: ({ focused, size, color }) => {
             return <Feather name="grid" size={size} color="#212121" />;
           },
-          headerRight: () => (
-            <MaterialIcons
-              name="logout"
-              size={24}
-              color="#BDBDBD"
-              style={styles.logout}
-              onPress={() => alert("This is a button!")}
-            />
-          ),
         }}
       />
 
@@ -88,7 +79,6 @@ export const useRoute = (isAuth) => {
 };
 
 const styles = StyleSheet.create({
-  logout: { paddingRight: 12 },
   iconAdd: {
     paddingVertical: 9,
     paddingHorizontal: 28.5,

@@ -19,6 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import ToastManager, { Toast } from "toastify-react-native";
 import uuid from "react-native-uuid";
+import db from "../firebase/config";
 
 const initialState = {
   id: "",
@@ -66,16 +67,40 @@ export default function CreatePostsScreen({ navigation }) {
   const handleSubmit = async () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-
-    navigation.navigate("DefaultScreen", state);
+    uploadPhotoToServer();
+    // const createPost = await db.firestore().collection("posts").add({
+    //   photo,
+    //   name: state.name,
+    //   latitude: state.latitude,
+    //   longitude: state.longitude,
+    //   city: state.city,
+    //   comments: [],
+    // });
     setState(initialState);
     setPhoto(null);
+    navigation.navigate("DefaultScreen", state);
   };
 
   const onDelete = () => {
-    navigation.navigate("DefaultScreen");
     setState(initialState);
     setPhoto(null);
+    navigation.navigate("DefaultScreen");
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const unicPostId = uuid.v4();
+
+    await db.storage().ref(`postImage/${unicPostId}`).put(file);
+
+    const processedPhoto = await db
+      .storage()
+      .ref("postImage")
+      .child(unicPostId)
+      .getDownloadURL();
+    console.log("processedPhoto:", processedPhoto);
   };
 
   return (
@@ -105,7 +130,6 @@ export default function CreatePostsScreen({ navigation }) {
           >
             <Text style={{ fontSize: 18, color: "red" }}> Flip </Text>
           </TouchableOpacity>
-
           <View style={styles.photoView}>
             <TouchableOpacity
               style={styles.button}

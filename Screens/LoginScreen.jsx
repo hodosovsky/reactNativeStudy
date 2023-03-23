@@ -14,6 +14,8 @@ import {
   Button,
 } from "react-native";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { authSignInUser } from "../redux/auth/authOperations";
 
 const bg = require("../assets/images/bg.jpg");
 
@@ -28,6 +30,8 @@ export default function LoginScreen({ navigation }) {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [passwordFocus, setPasswordFocus] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
+
+  const dispatch = useDispatch();
 
   const changeIsPasswordSecure = () => {
     setIsPasswordSecure(!isPasswordSecure);
@@ -47,10 +51,11 @@ export default function LoginScreen({ navigation }) {
     if (state.email.includes("@")) {
       setIsShowKeyboard(false);
       Keyboard.dismiss();
+      dispatch(authSignInUser(state));
       console.log(state);
       setState(initialState);
 
-      navigation.navigate("Home");
+      // navigation.navigate("Home");
 
       return;
     }

@@ -1,15 +1,16 @@
 import { StyleSheet } from "react-native";
 import { useFonts } from "expo-font";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
-import { useRoute } from "./router";
-import { NavigationContainer } from "@react-navigation/native";
+import { Provider } from "react-redux";
+
+import Main from "./Components/main";
+import { store } from "./redux/store";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const routing = useRoute(true);
   const [fontsLoaded] = useFonts({
     medium: require("./assets/fonts/rmedium.ttf"),
     normal: require("./assets/fonts/rregular.ttf"),
@@ -26,9 +27,11 @@ export default function App() {
     return null;
   }
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <NavigationContainer style={styles.tab}>{routing}</NavigationContainer>
-    </View>
+    <Provider store={store}>
+      <View style={styles.container} onLayout={onLayoutRootView}>
+        <Main />
+      </View>
+    </Provider>
   );
 }
 const styles = StyleSheet.create({

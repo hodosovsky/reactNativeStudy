@@ -14,6 +14,8 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import ToastManager, { Toast } from "toastify-react-native";
+import { useDispatch } from "react-redux";
+import { authSignUpUser } from "../redux/auth/authOperations";
 
 const bg = require("../assets/images/bg.jpg");
 const initialState = {
@@ -29,6 +31,8 @@ export default function RegistrationScreen({ navigation }) {
   const [passwordFocus, setPasswordFocus] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
   const [nameFocus, setNameFocus] = useState(false);
+
+  const dispatch = useDispatch();
 
   const changeIsPasswordSecure = () => {
     setIsPasswordSecure(!isPasswordSecure);
@@ -48,9 +52,10 @@ export default function RegistrationScreen({ navigation }) {
     if (state.email.includes("@")) {
       setIsShowKeyboard(false);
       Keyboard.dismiss();
-      console.log(state);
+
+      dispatch(authSignUpUser(state));
       setState(initialState);
-      navigation.navigate("Home");
+      // navigation.navigate("Home");
       return;
     }
 
