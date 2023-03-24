@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -23,7 +24,7 @@ export default function DefaultScreenPosts({ route, navigation }) {
   const [courses, setCourses] = useState(COURSES);
   const [state, setState] = useState([]);
 
-  console.log("state:", state);
+  const { name, avatar, email } = useSelector((state) => state.auth);
 
   const getAllPosts = async () => {
     await db
@@ -33,7 +34,7 @@ export default function DefaultScreenPosts({ route, navigation }) {
         setState(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
       );
   };
-
+  console.log(avatar);
   useEffect(() => {
     getAllPosts();
 
@@ -43,11 +44,11 @@ export default function DefaultScreenPosts({ route, navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Image source={require("../../assets/images/Rectangle.jpg")} />
+        <Image source={{ uri: avatar }} style={{ width: 60, height: 60 }} />
 
         <View style={styles.description}>
-          <Text style={styles.title}>{courses.title}</Text>
-          <Text style={styles.email}>{courses.email}</Text>
+          <Text style={styles.title}>{name}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
       </View>
 

@@ -8,9 +8,9 @@ import {
   FlatList,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useSelector } from "react-redux";
 import React, { useState, useEffect } from "react";
 import db from "../firebase/config";
-import { useSelector } from "react-redux";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -18,13 +18,10 @@ import { Ionicons } from "@expo/vector-icons";
 import PostsList from "../Components/PostsList";
 
 const bg = require("../assets/images/bg.jpg");
-const foto1 = require("../assets/images/Rectangle23.jpg");
-const foto2 = require("../assets/images/Rectangle24.jpg");
-const foto3 = require("../assets/images/Rectangle25.jpg");
 
 export default function ProfileScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
-  const { userId, name } = useSelector((state) => state.auth);
+  const { userId, name, avatar } = useSelector((state) => state.auth);
 
   const getUserPosts = async () => {
     await db
@@ -47,8 +44,8 @@ export default function ProfileScreen({ navigation }) {
           <View style={{ position: "absolute", top: -60, left: 128 }}>
             <View style={styles.avatar}>
               <Image
-                source={require("../assets/images/Rectangle.jpg")}
-                style={{ width: 120, height: 120 }}
+                source={{ uri: avatar }}
+                style={{ width: 120, height: 120, borderRadius: 16 }}
               />
             </View>
           </View>

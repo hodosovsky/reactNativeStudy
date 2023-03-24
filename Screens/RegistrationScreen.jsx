@@ -9,10 +9,12 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { AntDesign } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import ToastManager, { Toast } from "toastify-react-native";
 import { useDispatch } from "react-redux";
 import { authSignUpUser } from "../redux/auth/authOperations";
@@ -52,7 +54,7 @@ export default function RegistrationScreen({ navigation }) {
     if (state.email.includes("@")) {
       setIsShowKeyboard(false);
       Keyboard.dismiss();
-
+      console.log("register state", state);
       dispatch(authSignUpUser(state));
       setState(initialState);
       // navigation.navigate("Home");
@@ -60,6 +62,19 @@ export default function RegistrationScreen({ navigation }) {
     }
 
     Toast.error('Email must have "@"');
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setState((prevState) => ({ ...prevState, avatar: result.assets[0].uri }));
+    }
   };
 
   return (
@@ -82,12 +97,33 @@ export default function RegistrationScreen({ navigation }) {
             >
               <View style={{ position: "absolute", top: -60, left: 128 }}>
                 <View style={styles.avatar}>
-                  <AntDesign
-                    style={styles.icon}
-                    name="pluscircleo"
-                    size={25}
-                    color="#FF6C00"
-                  />
+                  {state.avatar ? (
+                    <View>
+                      <TouchableOpacity
+                        onPress={() =>
+                          setState((prevState) => ({
+                            ...prevState,
+                            avatar: null,
+                          }))
+                        }
+                        style={{ ...styles.icon, right: 0 }}
+                      >
+                        <Ionicons
+                          name="close-circle-outline"
+                          size={25}
+                          color="#E8E8E8"
+                        />
+                      </TouchableOpacity>
+                      <Image
+                        source={{ uri: state.avatar }}
+                        style={styles.avatarImage}
+                      />
+                    </View>
+                  ) : (
+                    <TouchableOpacity onPress={pickImage} style={styles.icon}>
+                      <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
 
