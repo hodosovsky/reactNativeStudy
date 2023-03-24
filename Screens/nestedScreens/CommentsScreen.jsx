@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import moment from "moment";
-import uuid from "react-native-uuid";
+
 import { AntDesign } from "@expo/vector-icons";
 
 import db from "../../firebase/config";
@@ -28,6 +28,7 @@ export default function CommentsScreen({ route }) {
   const { postId, photo, commentsCount } = route.params;
   const { name } = useSelector((state) => state.auth);
   const [allComments, setAllComments] = useState([]);
+  console.log("allComments:", allComments);
 
   useEffect(() => {
     getAllPosts();
@@ -52,6 +53,8 @@ export default function CommentsScreen({ route }) {
       });
 
     setComment("");
+
+    keyboardHide();
   };
 
   const keyboardHide = () => {
@@ -70,7 +73,7 @@ export default function CommentsScreen({ route }) {
       .doc(postId)
       .collection("comments")
       .onSnapshot((data) =>
-        setAllComments(data.docs.map((doc) => ({ ...doc.data() })))
+        setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
       );
   };
 
@@ -94,11 +97,12 @@ export default function CommentsScreen({ route }) {
                 <View style={styles.dateAndTime}>
                   <View style={styles.dateTextContainer}>
                     <Text style={styles.dateText}>
-                      {moment(item.date).format("D MMM, YYYY")}
+                      {moment(new Date(item.date)).format("L")}
+                      {/* {moment(item.date).format("D MMM, YYYY").toString()} */}
                     </Text>
                   </View>
                   <Text style={styles.timeText}>
-                    {moment(item.date).format("hh:mm")}
+                    {moment(new Date(item.date)).format("LT")}
                   </Text>
                 </View>
               </View>

@@ -32,7 +32,7 @@ export default function ProfileScreen({ navigation }) {
       .collection("posts")
       .where("userId", "==", userId)
       .onSnapshot((data) =>
-        setPosts(data.docs.map((doc) => ({ ...doc.data() })))
+        setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
       );
   };
 

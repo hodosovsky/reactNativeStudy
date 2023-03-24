@@ -93,13 +93,13 @@ export default function CreatePostsScreen({ navigation }) {
       .ref("postImage")
       .child(unicPostId)
       .getDownloadURL();
-    console.log("processedPhoto:", processedPhoto);
 
     return processedPhoto;
   };
 
   const uploadPostToServer = async () => {
     const uploadImage = await uploadPhotoToServer();
+
     const createPost = await db.firestore().collection("posts").add({
       photo: uploadImage,
       name: state.name,
