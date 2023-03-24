@@ -1,15 +1,4 @@
-// import { Text } from "react-native";
-
-// const CommentsScreen = () => {
-//   return (
-//     <>
-//       <Text>Comments screen</Text>
-//     </>
-//   );
-// };
-
-// export default CommentsScreen;
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import {
   View,
@@ -26,16 +15,46 @@ import {
   Keyboard,
 } from "react-native";
 import { useSelector } from "react-redux";
-
+import moment from "moment";
+import uuid from "react-native-uuid";
 import { AntDesign } from "@expo/vector-icons";
 
 import db from "../../firebase/config";
 
-export default function CommentsScreen() {
+export default function CommentsScreen({ route }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [comment, setComment] = useState(null);
-  const photo = require("../../assets/images/Rectangle23.jpg");
-  const onReturn = () => {
+  const [comment, setComment] = useState([]);
+  const currentDate = new Date().toString();
+  const { postId, photo, commentsCount } = route.params;
+  const { name } = useSelector((state) => state.auth);
+  const [allComments, setAllComments] = useState([]);
+
+  useEffect(() => {
+    getAllPosts();
+  }, []);
+
+  const createPost = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(postId)
+      .collection("comments")
+      .add({ comment, name, date: currentDate });
+
+    getAllPosts();
+
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(postId)
+      .update({
+        commentsCount: commentsCount + 1,
+      });
+
+    setComment("");
+  };
+
+  const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
@@ -44,61 +63,79 @@ export default function CommentsScreen() {
     setIsShowKeyboard(true);
   };
 
-  return (
-    <View style={styles.container}>
-      <Image
-        source={require("../../assets/images/Rectangle23.jpg")}
-        style={styles.photo}
-      />
+  const getAllPosts = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(postId)
+      .collection("comments")
+      .onSnapshot((data) =>
+        setAllComments(data.docs.map((doc) => ({ ...doc.data() })))
+      );
+  };
 
-      {/* <FlatList
-        data={allComments}
-        keyExtractor={(item, indx) => indx.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.commentContainer}>
-            <Image source={{ uri: item.avatar }} style={styles.avatar} />
-            <View style={styles.comment}>
-              <Text style={styles.commentText}>{item.comment}</Text>
-              <View style={styles.dateAndTime}>
-                <View style={styles.dateTextContainer}>
-                  <Text style={styles.dateText}>'date'</Text>
+  function checkIndexIsEven(n) {
+    return n % 2 == 0;
+  }
+
+  return (
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.container}>
+        <Image source={{ uri: photo }} style={styles.photo} />
+
+        <FlatList
+          data={allComments}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.commentContainer}>
+              {/* <Image source={{ uri: item.avatar }} style={styles.avatar} /> */}
+              <View style={styles.comment}>
+                <Text style={styles.commentText}>{item.comment}</Text>
+                <View style={styles.dateAndTime}>
+                  <View style={styles.dateTextContainer}>
+                    <Text style={styles.dateText}>
+                      {moment(item.date).format("D MMM, YYYY")}
+                    </Text>
+                  </View>
+                  <Text style={styles.timeText}>
+                    {moment(item.date).format("hh:mm")}
+                  </Text>
                 </View>
-                <Text style={styles.timeText}>'date'</Text>
               </View>
             </View>
-          </View>
-        )}
-      /> */}
+          )}
+        />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-      >
-        <View
-          style={{
-            ...Platform.select({
-              ios: {
-                ...styles.inputContainer,
-                marginBottom: isShowKeyboard ? 120 : 0,
-              },
-            }),
-          }}
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-          <TextInput
-            onSubmitEditing={onReturn}
-            value={comment}
-            onChangeText={(value) => setComment(value)}
-            style={styles.input}
-            onFocus={onFocusInput}
-            placeholder="Comment..."
-            placeholderTextColor="#BDBDBD"
-          />
+          <View
+            style={{
+              ...Platform.select({
+                ios: {
+                  ...styles.inputContainer,
+                  marginBottom: isShowKeyboard ? 120 : 0,
+                },
+              }),
+            }}
+          >
+            <TextInput
+              onSubmitEditing={keyboardHide}
+              value={comment}
+              onChangeText={(value) => setComment(value)}
+              style={styles.input}
+              onFocus={onFocusInput}
+              placeholder="Comment..."
+              placeholderTextColor="#BDBDBD"
+            />
 
-          <TouchableOpacity style={styles.sendBtn}>
-            <AntDesign name="arrowup" size={24} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+            <TouchableOpacity onPress={createPost} style={styles.sendBtn}>
+              <AntDesign name="arrowup" size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -116,9 +153,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 32,
   },
-  commentsContainer: {
-    flex: 1,
-  },
+  // commentsContainer: {
+  //   flex: 1,
+  // },
   commentContainer: {
     display: "flex",
     flexDirection: "row",

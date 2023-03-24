@@ -29,7 +29,13 @@ export default function PostsScreen() {
           ),
         }}
       />
-      <NestedScreen.Screen name="Comments" component={CommentsScreen} />
+      <NestedScreen.Screen
+        options={{
+          tabBarStyle: { display: "none" },
+        }}
+        name="Comments"
+        component={CommentsScreen}
+      />
       <NestedScreen.Screen name="Map" component={MapScreen} />
     </NestedScreen.Navigator>
   );

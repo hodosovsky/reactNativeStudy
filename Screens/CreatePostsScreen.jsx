@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Platform,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import * as MediaLibrary from "expo-media-library";
@@ -37,7 +38,7 @@ export default function CreatePostsScreen({ navigation }) {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [photo, setPhoto] = useState(null);
   const [state, setState] = useState(initialState);
-
+  const { userId, name: owner } = useSelector((state) => state.auth);
   useEffect(() => {
     (async () => {
       let { status } = await Camera.requestCameraPermissionsAsync();
@@ -67,15 +68,7 @@ export default function CreatePostsScreen({ navigation }) {
   const handleSubmit = async () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    uploadPhotoToServer();
-    // const createPost = await db.firestore().collection("posts").add({
-    //   photo,
-    //   name: state.name,
-    //   latitude: state.latitude,
-    //   longitude: state.longitude,
-    //   city: state.city,
-    //   comments: [],
-    // });
+    uploadPostToServer();
     setState(initialState);
     setPhoto(null);
     navigation.navigate("DefaultScreen", state);
@@ -101,6 +94,23 @@ export default function CreatePostsScreen({ navigation }) {
       .child(unicPostId)
       .getDownloadURL();
     console.log("processedPhoto:", processedPhoto);
+
+    return processedPhoto;
+  };
+
+  const uploadPostToServer = async () => {
+    const uploadImage = await uploadPhotoToServer();
+    const createPost = await db.firestore().collection("posts").add({
+      photo: uploadImage,
+      name: state.name,
+      latitude: state.latitude,
+      longitude: state.longitude,
+      city: state.city,
+      userId,
+      owner,
+      commentsCount: 0,
+      likesCount: 0,
+    });
   };
 
   return (

@@ -7,7 +7,7 @@ import {
   Image,
   View,
 } from "react-native";
-
+import db from "../../firebase/config";
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -22,10 +22,23 @@ const COURSES = {
 export default function DefaultScreenPosts({ route, navigation }) {
   const [courses, setCourses] = useState(COURSES);
   const [state, setState] = useState([]);
+
+  console.log("state:", state);
+
+  const getAllPosts = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .onSnapshot((data) =>
+        setState(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+  };
+
   useEffect(() => {
-    if (route.params) setState((prev) => [...prev, route.params]);
-    console.log(state);
-  }, [route.params]);
+    getAllPosts();
+
+    // if (route.params) setState((prev) => [...prev, route.params]);
+  }, []);
 
   return (
     <View style={styles.container}>

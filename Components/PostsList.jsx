@@ -14,7 +14,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-
+import db from "../firebase/config";
 // const NestedScreen = createStackNavigator();
 
 const PostsList = ({ state, navigation }) => {
@@ -28,7 +28,7 @@ const PostsList = ({ state, navigation }) => {
         return (
           <View>
             <Image
-              source={{ uri: item.uri }}
+              source={{ uri: item.photo }}
               style={{ width: "100%", height: 240 }}
             />
             <View style={styles.description}>
@@ -44,12 +44,18 @@ const PostsList = ({ state, navigation }) => {
               <View style={{ display: "flex", flexDirection: "row" }}>
                 <TouchableOpacity
                   style={styles.likes}
-                  onPress={() => navigation.navigate("Comments", item)}
+                  onPress={() =>
+                    navigation.navigate("Comments", {
+                      postId: item.id,
+                      photo: item.photo,
+                      commentsCount: item.commentsCount,
+                    })
+                  }
                 >
                   <FontAwesome
                     name="comment"
                     size={24}
-                    color={true ? "#FF6C00" : "#BDBDBD"}
+                    color={item.commentsCount > 0 ? "#FF6C00" : "#BDBDBD"}
                   />
                   <Text
                     style={{
@@ -62,14 +68,25 @@ const PostsList = ({ state, navigation }) => {
                       marginRight: 27,
                     }}
                   >
-                    {5}
+                    {item.commentsCount ? item.commentsCount : 0}
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.likes}>
+                <TouchableOpacity
+                  style={styles.likes}
+                  onPress={async () => {
+                    await db
+                      .firestore()
+                      .collection("posts")
+                      .doc(item.id)
+                      .update({
+                        likesCount: item.likesCount + 1,
+                      });
+                  }}
+                >
                   <AntDesign
                     name="like2"
                     size={24}
-                    color={true ? "#FF6C00" : "#BDBDBD"}
+                    color={item.likesCount > 0 ? "#FF6C00" : "#BDBDBD"}
                   />
                   <Text
                     style={{
@@ -80,7 +97,7 @@ const PostsList = ({ state, navigation }) => {
                       marginLeft: 9,
                     }}
                   >
-                    {12}
+                    {item.likesCount ? item.likesCount : 0}
                   </Text>
                 </TouchableOpacity>
               </View>
